@@ -1,0 +1,17 @@
+# Концы строк: в репозитории всегда LF.
+# CRLF в justfile ломает разбор, а в shebang-рецепте даёт
+# `bad interpreter: /bin/bash^M` на Debian.
+* text=auto eol=lf
+
+# PowerShell 7 читает LF нормально, отдельного eol=crlf не нужно.
+*.ps1  text eol=lf
+*.sh   text eol=lf
+*.just text eol=lf
+
+# Бинарное — не трогать.
+*.png  binary
+*.jpg  binary
+*.gif  binary
+*.ico  binary
+*.zip  binary
+*.gz   binary
