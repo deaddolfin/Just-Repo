@@ -166,7 +166,9 @@ just_new() {
             printf 'или подключите функцию: source %s/just_new.sh\n' "${repo:-<репозиторий>}" >&2
             return 1
         fi
-        cmd="$(fc -lrn | head -n 1 | sed 's/^[[:space:]]*//; s/[[:space:]]*$//')"
+        # bash кладёт команду в историю ДО её выполнения, поэтому первой строкой
+        # идёт сам вызов just_new — берём первую строку, которая им не является
+        cmd="$(fc -lrn 2>/dev/null | sed 's/^[[:space:]]*//; s/[[:space:]]*$//' | grep -vE '^(just_new|jnew)([[:space:]]|$)' | head -n 1)"
     fi
     if [ -z "$cmd" ]; then
         printf 'just_new: команды нет — история пуста или недоступна.\n' >&2
@@ -175,13 +177,6 @@ just_new() {
         printf '  где функция подключена:  source %s/just_new.sh\n' "${repo:-<репозиторий>}" >&2
         return 1
     fi
-    case "$cmd" in
-        just_new*|jnew*)
-            printf 'just_new: последняя команда — сам just_new. Передайте команду явно.\n' >&2
-            return 1
-            ;;
-    esac
-
     printf 'команда: %s\n' "$cmd"
 
     # --- имя рецепта ---
