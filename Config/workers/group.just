@@ -14,9 +14,23 @@
 # ---------------------------------------------------------------------------
 
 # Перезапустить Google worker
-g_restart:
+restart_g:
     sudo systemctl restart parserservice@Config_google
 
 # Перезапустить Scraper worker
-s_restart:
+restart_s:
     sudo systemctl restart parserservice@Config_scrape
+
+# Запуск тестов
+test:
+    npm test
+
+# Запуск теста и сборки проекта
+build: test
+    npm run build
+
+# Перезапустить все worker
+[parallel]
+restart_all: restart_g restart_s
+    @echo "All services restarted"
+
