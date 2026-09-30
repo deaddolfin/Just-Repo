@@ -11,7 +11,7 @@
 # ---------------------------------------------------------------------------
 set -euo pipefail
 
-MIN_JUST="1.35.0"
+MIN_JUST="1.48.0"
 REPO_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/just"
 MARK_BEGIN="# >>> just-aliases >>>"
@@ -123,7 +123,7 @@ if command -v just >/dev/null 2>&1; then
     if version_ge "$JUST_VER" "$MIN_JUST"; then
         info "уже установлен: just $JUST_VER"
     else
-        warn "just $JUST_VER старее требуемой $MIN_JUST (нужны allow-duplicate-variables и import?)"
+        warn "just $JUST_VER старее требуемой $MIN_JUST (нужны атрибут [default], динамическое автодополнение, allow-duplicate-variables и import?)"
         install_just
     fi
 else
@@ -171,8 +171,7 @@ trap 'rm -f "$TMP_JUSTFILE"' EXIT
     printf "import? 'local.just'\n"
     printf "import  'group.just'\n"
     printf "import  'global.just'\n\n"
-    printf 'default:\n'
-    printf '    @just --list --unsorted\n'
+    printf '# Рецепт по умолчанию (атрибут [default]) определён в global.just.\n'
 } > "$TMP_JUSTFILE"
 
 if [ -f "$JUSTFILE" ] && ! cmp -s "$TMP_JUSTFILE" "$JUSTFILE"; then
@@ -273,7 +272,8 @@ info "записан $CONFIG_DIR/state.env"
 shell_block() {
     printf '%s\n' "$MARK_BEGIN"
     printf "alias j='just --justfile \"%s/justfile\" --working-directory .'\n" "$CONFIG_DIR"
-    printf 'complete -W "$(just --justfile "%s/justfile" --summary 2>/dev/null)" j\n' "$CONFIG_DIR"
+    printf 'JUST_J_JUSTFILE="%s/justfile"\n' "$CONFIG_DIR"
+    printf 'source "%s/just_complete.sh"\n' "$REPO_DIR"
     printf 'source "%s/just_new.sh"\n' "$REPO_DIR"
     printf '%s\n' "$MARK_END"
 }

@@ -32,7 +32,7 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
-$MinJust    = [version]'1.35.0'
+$MinJust    = [version]'1.48.0'
 $RepoDir    = $PSScriptRoot
 $ConfigDir  = Join-Path $env:APPDATA 'just'
 $MarkBegin  = '# >>> just-aliases >>>'
@@ -132,7 +132,7 @@ if ($justVersion -and $justVersion -ge $MinJust) {
     Write-Info "уже установлен: just $justVersion"
 } else {
     if ($justVersion) {
-        Write-Warn "just $justVersion старее требуемой $MinJust (нужны allow-duplicate-variables и import?)"
+        Write-Warn "just $justVersion старее требуемой $MinJust (нужны атрибут [default], динамическое автодополнение, allow-duplicate-variables и import?)"
     } else {
         Write-Info 'не найден'
     }
@@ -192,8 +192,7 @@ import? 'local.just'
 import  'group.just'
 import  'global.just'
 
-default:
-    @just --list --unsorted
+# Рецепт по умолчанию (атрибут [default]) определён в global.just.
 "@ -replace "`r`n", "`n"
 
 $existing = if (Test-Path -LiteralPath $JustFile) {
@@ -316,12 +315,8 @@ Write-Info "записан $(Join-Path $ConfigDir 'state.env')"
 $shellBlock = @(
     $MarkBegin,
     "function j { just --justfile `"$JustFile`" --working-directory . @args }",
-    "Register-ArgumentCompleter -CommandName j -ScriptBlock {",
-    "    param(`$wordToComplete)",
-    "    (just --justfile `"$JustFile`" --summary) -split '\s+' |",
-    "        Where-Object { `$_ -like `"`$wordToComplete*`" } |",
-    "        ForEach-Object { [Management.Automation.CompletionResult]::new(`$_) }",
-    "}",
+    "`$env:JUST_J_JUSTFILE = `"$JustFile`"",
+    ". `"$RepoDir\just_complete.ps1`"",
     ". `"$RepoDir\just_new.ps1`"",
     $MarkEnd
 )
