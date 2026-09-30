@@ -14,6 +14,8 @@ set -euo pipefail
 MIN_JUST="1.48.0"
 REPO_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/just"
+LOCAL_BIN="$HOME/.local/bin"
+PATH_ADDED=0          # 1, если пришлось добавить LOCAL_BIN в PATH
 MARK_BEGIN="# >>> just-aliases >>>"
 MARK_END="# <<< just-aliases <<<"
 
@@ -108,16 +110,32 @@ install_just() {
         return 0
     fi
 
-    info "ставлю just в ~/.local/bin официальным установщиком"
-    mkdir -p "$HOME/.local/bin"
+    info "ставлю just в $LOCAL_BIN официальным установщиком"
+    mkdir -p "$LOCAL_BIN"
+    # --force: сюда попадаем, только если подходящего just нет (не найден или слишком
+    # старый), а установщик без этого флага отказывается трогать существующий файл
     curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh \
-        | bash -s -- --to "$HOME/.local/bin" >/dev/null \
+        | bash -s -- --force --to "$LOCAL_BIN" >/dev/null \
         || die "не удалось скачать и установить just"
-    export PATH="$HOME/.local/bin:$PATH"
-    warn "just поставлен в ~/.local/bin — убедитесь, что каталог есть в PATH после перелогина"
+    case ":$PATH:" in
+        *":$LOCAL_BIN:"*) ;;
+        *)
+            export PATH="$LOCAL_BIN:$PATH"
+            PATH_ADDED=1
+            warn "$LOCAL_BIN нет в PATH — на время запуска добавлен; постоянно: init.sh --shell"
+            ;;
+    esac
 }
 
 step "just"
+# Каталог ~/.local/bin может не быть в PATH (Debian добавляет его через ~/.profile,
+# только если он существовал на момент логина), хотя just там уже лежит. Без этой
+# проверки command -v его не находит, и установщик отказывается перезаписывать файл.
+if ! command -v just >/dev/null 2>&1 && [ -x "$LOCAL_BIN/just" ]; then
+    export PATH="$LOCAL_BIN:$PATH"
+    PATH_ADDED=1
+    info "найден в $LOCAL_BIN, но каталога нет в PATH — добавлен на время запуска"
+fi
 if command -v just >/dev/null 2>&1; then
     JUST_VER="$(just --version | awk '{print $2}')"
     if version_ge "$JUST_VER" "$MIN_JUST"; then
@@ -271,6 +289,10 @@ info "записан $CONFIG_DIR/state.env"
 
 shell_block() {
     printf '%s\n' "$MARK_BEGIN"
+    if [ "$PATH_ADDED" -eq 1 ]; then
+        # just лежит в ~/.local/bin, которого может не быть в PATH новой оболочки
+        printf '%s\n' 'case ":$PATH:" in *":$HOME/.local/bin:"*) ;; *) export PATH="$HOME/.local/bin:$PATH" ;; esac'
+    fi
     printf "alias j='just --justfile \"%s/justfile\" --working-directory .'\n" "$CONFIG_DIR"
     printf 'JUST_J_JUSTFILE="%s/justfile"\n' "$CONFIG_DIR"
     printf 'source "%s/just_complete.sh"\n' "$REPO_DIR"
