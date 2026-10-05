@@ -297,8 +297,10 @@ shell_block() {
     printf '%s\n' "alias jg='just -g'"
     printf 'source "%s/Scripts/just_complete.sh"\n' "$REPO_DIR"
     printf 'source "%s/Scripts/go_dir.sh"\n' "$REPO_DIR"
+    printf 'source "%s/Scripts/j_file.sh"\n' "$REPO_DIR"
     printf 'source "%s/Scripts/just_new.sh"\n' "$REPO_DIR"
     printf 'source "%s/Scripts/just_dir.sh"\n' "$REPO_DIR"
+    printf 'source "%s/Scripts/just_file.sh"\n' "$REPO_DIR"
     printf '%s\n' "$MARK_END"
 }
 

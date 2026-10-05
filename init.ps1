@@ -318,8 +318,10 @@ $shellBlock = @(
     "function jg { just -g @args }",
     ". `"$RepoDir\Scripts\just_complete.ps1`"",
     ". `"$RepoDir\Scripts\go_dir.ps1`"",
+    ". `"$RepoDir\Scripts\j_file.ps1`"",
     ". `"$RepoDir\Scripts\just_new.ps1`"",
     ". `"$RepoDir\Scripts\just_dir.ps1`"",
+    ". `"$RepoDir\Scripts\just_file.ps1`"",
     $MarkEnd
 )
 
