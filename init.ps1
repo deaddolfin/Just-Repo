@@ -314,8 +314,8 @@ Write-Info "записан $(Join-Path $ConfigDir 'state.env')"
 
 $shellBlock = @(
     $MarkBegin,
-    "function j { just --justfile `"$JustFile`" --working-directory . @args }",
-    "`$env:JUST_J_JUSTFILE = `"$JustFile`"",
+    "function j { just @args }",
+    "function jg { just -g @args }",
     ". `"$RepoDir\just_complete.ps1`"",
     ". `"$RepoDir\just_new.ps1`"",
     $MarkEnd

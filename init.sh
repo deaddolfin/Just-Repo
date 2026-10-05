@@ -293,8 +293,8 @@ shell_block() {
         # just лежит в ~/.local/bin, которого может не быть в PATH новой оболочки
         printf '%s\n' 'case ":$PATH:" in *":$HOME/.local/bin:"*) ;; *) export PATH="$HOME/.local/bin:$PATH" ;; esac'
     fi
-    printf "alias j='just --justfile \"%s/justfile\" --working-directory .'\n" "$CONFIG_DIR"
-    printf 'JUST_J_JUSTFILE="%s/justfile"\n' "$CONFIG_DIR"
+    printf '%s\n' "alias j='just'"
+    printf '%s\n' "alias jg='just -g'"
     printf 'source "%s/just_complete.sh"\n' "$REPO_DIR"
     printf 'source "%s/just_new.sh"\n' "$REPO_DIR"
     printf '%s\n' "$MARK_END"
