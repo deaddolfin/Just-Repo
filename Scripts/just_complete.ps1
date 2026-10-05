@@ -5,7 +5,7 @@
     Подключается блоком из init.ps1 (-WithShell):
         function j  { just @args }
         function jg { just -g @args }
-        . C:\путь\к\репозиторию\just_complete.ps1
+        . C:\путь\к\репозиторию\Scripts\just_complete.ps1
 
     Всё, что умеет дополнять just, — флаги, рецепты, переменные — делает сам
     бинарник (`just --completions powershell`, динамическое дополнение с just 1.48):

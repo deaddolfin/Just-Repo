@@ -5,7 +5,7 @@
 # Подключается блоком из init.sh (--shell):
 #     alias j='just'
 #     alias jg='just -g'
-#     source /путь/к/репозиторию/just_complete.sh
+#     source /путь/к/репозиторию/Scripts/just_complete.sh
 #
 # Всё, что умеет дополнять just, — флаги, рецепты, переменные — делает сам
 # бинарник (`just --completions bash`, динамическое дополнение с just 1.48):

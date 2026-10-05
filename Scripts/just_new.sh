@@ -4,7 +4,7 @@
 # Аналог функции prev из pet, но для just.
 #
 # Подключение (это делает init.sh --shell):
-#     source /путь/к/репозиторию/just_new.sh
+#     source /путь/к/репозиторию/Scripts/just_new.sh
 #
 # Использование:
 #     just_new                      взять последнюю команду из истории
@@ -163,7 +163,7 @@ just_new() {
         if [ -z "${BASH_VERSION:-}" ] || ! fc -l -1 >/dev/null 2>&1; then
             printf 'just_new: история недоступна. Передайте команду явно:\n' >&2
             printf '    just_new -- <команда>\n' >&2
-            printf 'или подключите функцию: source %s/just_new.sh\n' "${repo:-<репозиторий>}" >&2
+            printf 'или подключите функцию: source %s/Scripts/just_new.sh\n' "${repo:-<репозиторий>}" >&2
             return 1
         fi
         # bash кладёт команду в историю ДО её выполнения, поэтому первой строкой
@@ -174,7 +174,7 @@ just_new() {
         printf 'just_new: команды нет — история пуста или недоступна.\n' >&2
         printf '  Передайте команду явно:  just_new -- <команда>\n' >&2
         printf '  Из истории команда берётся только в интерактивном bash,\n' >&2
-        printf '  где функция подключена:  source %s/just_new.sh\n' "${repo:-<репозиторий>}" >&2
+        printf '  где функция подключена:  source %s/Scripts/just_new.sh\n' "${repo:-<репозиторий>}" >&2
         return 1
     fi
     printf 'команда: %s\n' "$cmd"

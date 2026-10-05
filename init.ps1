@@ -316,8 +316,10 @@ $shellBlock = @(
     $MarkBegin,
     "function j { just @args }",
     "function jg { just -g @args }",
-    ". `"$RepoDir\just_complete.ps1`"",
-    ". `"$RepoDir\just_new.ps1`"",
+    ". `"$RepoDir\Scripts\just_complete.ps1`"",
+    ". `"$RepoDir\Scripts\go_dir.ps1`"",
+    ". `"$RepoDir\Scripts\just_new.ps1`"",
+    ". `"$RepoDir\Scripts\just_dir.ps1`"",
     $MarkEnd
 )
 
